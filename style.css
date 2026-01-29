@@ -1,6 +1,5 @@
-/* 全局设置 */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: #fdf6e3;
     color: #333;
     display: flex;
@@ -8,191 +7,85 @@ body {
     padding: 20px;
     margin: 0;
 }
+.container { width: 100%; max-width: 400px; }
+.app-title { color: #d35400; font-size: 24px; margin-bottom: 15px; text-align: center; }
 
-.container {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-}
-
-h1 {
-    color: #d35400;
-    margin-bottom: 5px;
-    font-size: 24px;
-}
-
-.subtitle {
-    color: #7f8c8d;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-/* 卡片样式 */
+/* 卡片通用样式 */
 .card {
     background: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    position: relative; /* 关键：为了让历史按钮定位 */
 }
-
 .hidden { display: none !important; }
 
-/* 表单控件 */
-.form-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-    font-size: 14px;
-}
-
-select, input {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #eee;
-    border-radius: 10px;
-    font-size: 16px;
-    outline: none;
-    background-color: #fafafa;
-    box-sizing: border-box;
-}
-
-select:focus, input:focus { border-color: #ff9f43; }
-
-.badge {
-    display: inline-block;
-    background-color: #ff9f43;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-/* 按钮样式 */
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-button:active { transform: scale(0.98); }
-
-.btn-primary { background-color: #e67e22; color: white; margin-top: 10px; }
-.btn-secondary { background-color: #95a5a6; color: white; margin-top: 15px; }
-
-.btn-history {
-    background-color: transparent;
-    color: #e67e22;
-    border: 2px solid #e67e22;
-    padding: 8px;
-    font-size: 14px;
-    margin-bottom: 20px;
-    border-radius: 20px;
-    width: auto;
-    display: inline-block;
-}
-
-/* 结果小票 */
-.ticket {
-    border: 2px dashed #ddd;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #fffdf0;
-}
-
-.ticket-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    font-size: 15px;
-}
-
-.highlight { color: #d35400; font-weight: bold; }
-.footer-text { font-size: 12px; color: #999; margin-top: 10px; }
-
-/* === 历史记录弹窗样式 === */
-.modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end; /* 从底部弹出 */
-}
-
-.modal-content {
-    background-color: white;
-    width: 100%;
-    max-width: 500px;
-    height: 80%; /* 占屏幕80% */
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-}
-
-.modal-header {
+/* 卡片顶部布局 */
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
+    margin-bottom: 20px;
 }
+.subtitle { color: #7f8c8d; font-size: 14px; margin: 0; }
 
-.close-btn {
-    font-size: 30px;
-    cursor: pointer;
-    color: #999;
-    line-height: 30px;
-}
-
-.history-list {
-    flex: 1;
-    overflow-y: auto; /* 允许滚动 */
-    padding-top: 10px;
-}
-
-/* 历史记录单条卡片 */
-.history-item {
-    background-color: #f9f9f9;
-    border-left: 5px solid #e67e22;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    position: relative;
-}
-
-.history-date { font-weight: bold; color: #333; margin-bottom: 5px; display: block;}
-.history-detail { font-size: 14px; color: #666; line-height: 1.6; }
-.delete-btn {
-    position: absolute;
-    top: 15px; right: 15px;
-    background: none;
+/* 漂亮的右上角历史按钮 */
+.btn-icon {
+    background-color: #f1f2f6;
+    color: #e67e22;
     border: none;
-    color: #e74c3c;
-    font-size: 20px;
-    padding: 0;
-    width: auto;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
 }
+.btn-icon:hover { background-color: #e67e22; color: white; }
+
+/* 表单控件 */
+.form-group { margin-bottom: 15px; text-align: left; }
+label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 14px; }
+select, input {
+    width: 100%; padding: 10px; border: 2px solid #eee;
+    border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; box-sizing: border-box;
+}
+select:focus, input:focus { border-color: #ff9f43; }
+
+/* 星期标签 */
+.badge { display: inline-block; background: #ff9f43; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-top: 5px; }
+
+/* 底部大按钮 */
+.btn-primary { width: 100%; padding: 12px; background: #e67e22; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
+.btn-secondary { width: 100%; padding: 12px; background: #95a5a6; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+/* 小票样式 */
+.ticket { border: 2px dashed #ddd; padding: 15px; border-radius: 10px; background: #fffdf0; }
+.ticket-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 15px; }
+.highlight { color: #d35400; font-weight: bold; }
+.footer-text { font-size: 12px; color: #999; margin-top: 10px; text-align: center; }
+
+/* 弹窗样式 */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 999; /* 提高层级 */
+    display: flex; justify-content: center; align-items: flex-end;
+}
+.modal-content {
+    background: white; width: 100%; max-width: 500px; height: 80%;
+    border-radius: 20px 20px 0 0; padding: 20px; box-sizing: border-box;
+    display: flex; flex-direction: column; animation: slideUp 0.3s;
+}
+@keyframes slideUp { from {transform: translateY(100%)} to {transform: translateY(0)} }
+
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+.close-btn { font-size: 28px; cursor: pointer; color: #999; }
+.history-list { flex: 1; overflow-y: auto; padding-top: 10px; }
+
+/* 历史列表项 */
+.history-item {
+    background: #f9f9f9; border-left: 4px solid #e67e22;
+    padding: 12px; margin-bottom: 10px; border-radius: 6px; position: relative;
+}
+.history-date { font-weight: bold; display: block; margin-bottom: 4px; }
+.history-detail { font-size: 14px; color: #666; line-height: 1.5; }
+.delete-btn { position: absolute; top: 10px; right: 10px; border: none; background: none; font-size: 18px; cursor: pointer; }

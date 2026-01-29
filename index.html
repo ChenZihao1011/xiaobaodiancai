@@ -9,15 +9,17 @@
 <body>
 
     <div class="container">
-        <!-- 顶部导航 -->
-        <header>
-            <h1>🍱 小宝今日菜单 🍱</h1>
-            <button id="history-btn" class="btn-history">📜 查看历史记录</button>
-        </header>
+        <!-- 标题 -->
+        <h1 class="app-title">🍱 小宝今日菜单 🍱</h1>
 
         <!-- 输入表单区域 -->
         <div id="order-form" class="card">
-            <p class="subtitle">选你想吃的，厨房马上安排！</p>
+            <!-- 历史记录入口放在卡片右上角 -->
+            <div class="card-header">
+                <p class="subtitle">想吃啥？厨房马上安排！</p>
+                <button id="history-btn" class="btn-icon">📜 历史</button>
+            </div>
+
             <div class="form-group">
                 <label>📅 选择日期</label>
                 <input type="date" id="date-picker">
@@ -26,23 +28,17 @@
 
             <div class="form-group">
                 <label>🍖 荤菜想吃啥？</label>
-                <select id="meat-select">
-                    <option value="" disabled selected>-- 请选择荤菜 --</option>
-                </select>
+                <select id="meat-select"><option value="" disabled selected>-- 请选择 --</option></select>
             </div>
 
             <div class="form-group">
                 <label>🥬 素菜想吃啥？</label>
-                <select id="veggie-select">
-                    <option value="" disabled selected>-- 请选择素菜 --</option>
-                </select>
+                <select id="veggie-select"><option value="" disabled selected>-- 请选择 --</option></select>
             </div>
 
             <div class="form-group">
                 <label>🍚 主食吃什么？</label>
-                <select id="staple-select">
-                    <option value="" disabled selected>-- 请选择主食 --</option>
-                </select>
+                <select id="staple-select"><option value="" disabled selected>-- 请选择 --</option></select>
             </div>
 
             <button id="submit-btn" class="btn-primary">提交菜单 ✅</button>
@@ -50,25 +46,17 @@
 
         <!-- 结果展示区域 -->
         <div id="result-card" class="card hidden">
-            <div class="ticket">
+            <div class="card-header">
                 <h2>🧾 点菜成功！</h2>
-                <div class="ticket-row">
-                    <span>时间：</span>
-                    <strong id="res-date"></strong>
-                </div>
+                <button id="history-btn-2" class="btn-icon">📜 历史</button>
+            </div>
+            
+            <div class="ticket">
+                <div class="ticket-row"><span>时间：</span><strong id="res-date"></strong></div>
                 <hr>
-                <div class="ticket-row">
-                    <span>🍖 荤菜：</span>
-                    <strong id="res-meat" class="highlight"></strong>
-                </div>
-                <div class="ticket-row">
-                    <span>🥬 素菜：</span>
-                    <strong id="res-veggie" class="highlight"></strong>
-                </div>
-                <div class="ticket-row">
-                    <span>🍚 主食：</span>
-                    <strong id="res-staple" class="highlight"></strong>
-                </div>
+                <div class="ticket-row"><span>🍖 荤菜：</span><strong id="res-meat" class="highlight"></strong></div>
+                <div class="ticket-row"><span>🥬 素菜：</span><strong id="res-veggie" class="highlight"></strong></div>
+                <div class="ticket-row"><span>🍚 主食：</span><strong id="res-staple" class="highlight"></strong></div>
                 <hr>
                 <p class="footer-text">已自动保存到历史记录</p>
             </div>
@@ -81,13 +69,10 @@
     <div id="history-modal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📜 历史菜单记录</h2>
+                <h2>📜 历史记录</h2>
                 <span id="close-history" class="close-btn">&times;</span>
             </div>
-            <div id="history-list" class="history-list">
-                <!-- JS会自动在这里插入历史记录 -->
-                <p style="text-align:center;color:#999;">暂无记录，快去点菜吧~</p>
-            </div>
+            <div id="history-list" class="history-list"></div>
         </div>
     </div>
 
