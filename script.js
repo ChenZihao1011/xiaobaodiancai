@@ -20,12 +20,13 @@ const resMeat = document.getElementById('res-meat');
 const resVeggie = document.getElementById('res-veggie');
 const resStaple = document.getElementById('res-staple');
 
-// 历史记录相关
+// 历史记录与复制相关
 const historyBtn = document.getElementById('history-btn');
-const historyBtn2 = document.getElementById('history-btn-2'); // 结果页那个
+const historyBtn2 = document.getElementById('history-btn-2');
 const historyModal = document.getElementById('history-modal');
 const closeHistory = document.getElementById('close-history');
 const historyList = document.getElementById('history-list');
+const shareBtn = document.getElementById('share-btn'); // 新增
 
 function init() {
     const today = new Date().toISOString().split('T')[0];
@@ -36,13 +37,7 @@ function init() {
     populateSelect(veggieSelect, menuData.veggie);
     populateSelect(stapleSelect, menuData.staple);
 
-    // 尝试读取今天的数据
-    try {
-        checkTodayOrder(today);
-    } catch (e) {
-        console.log("数据重置");
-        localStorage.clear(); // 如果出错，自动修复
-    }
+    checkTodayOrder(today);
 }
 
 function populateSelect(el, items) {
@@ -59,27 +54,21 @@ function updateWeekday(dateStr) {
     weekdayDisplay.textContent = w[d.getDay()];
 }
 
-// === 核心：安全的读写数据 ===
+// === 核心数据操作 ===
+
 function getHistory() {
     try {
         const raw = localStorage.getItem('baoMenu_history');
         if (!raw) return [];
-        // 关键：如果读出来的不是数组（是旧版数据），就重置为空
         const data = JSON.parse(raw);
-        if (!Array.isArray(data)) return [];
-        return data;
-    } catch (e) {
-        return [];
-    }
+        return Array.isArray(data) ? data : [];
+    } catch (e) { return []; }
 }
 
 function saveToHistory(data) {
     let list = getHistory();
-    // 删掉同日期的旧记录
     list = list.filter(item => item.date !== data.date);
-    // 加新的
     list.push(data);
-    // 排序
     list.sort((a, b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('baoMenu_history', JSON.stringify(list));
 }
@@ -97,16 +86,18 @@ function renderHistoryList() {
         const div = document.createElement('div');
         div.className = 'history-item';
         div.innerHTML = `
-            <span class="history-date">${item.date} (${item.weekday})</span>
-            <div class="history-detail">🍖 ${item.meat} | 🥬 ${item.veggie} | 🍚 ${item.staple}</div>
-            <button class="delete-btn" onclick="deleteHistory('${item.date}')">🗑️</button>
+            <div class="history-info">
+                <span class="history-date">${item.date} (${item.weekday})</span>
+                <div class="history-detail">🍖 ${item.meat} | 🥬 ${item.veggie} | 🍚 ${item.staple}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteHistory('${item.date}')">删除</button>
         `;
         historyList.appendChild(div);
     });
 }
 
 window.deleteHistory = function(date) {
-    if(!confirm("确认删除？")) return;
+    if(!confirm("确定要删除 " + date + " 的记录吗？")) return;
     let list = getHistory();
     list = list.filter(i => i.date !== date);
     localStorage.setItem('baoMenu_history', JSON.stringify(list));
@@ -130,6 +121,8 @@ function showResult(data) {
 }
 
 // === 事件监听 ===
+
+// 1. 提交
 submitBtn.addEventListener('click', () => {
     const data = {
         date: datePicker.value,
@@ -143,6 +136,20 @@ submitBtn.addEventListener('click', () => {
     showResult(data);
 });
 
+// 2. 复制功能 (新增)
+if(shareBtn) {
+    shareBtn.addEventListener('click', () => {
+        const text = `🍱 小宝点菜单 🍱\n\n📅 日期：${resDate.textContent}\n🍖 荤菜：${resMeat.textContent}\n🥬 素菜：${resVeggie.textContent}\n🍚 主食：${resStaple.textContent}\n\n👨‍🍳 辛苦大厨啦！`;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            alert("✅ 已复制！\n请去微信粘贴发给我吧~");
+        }).catch(err => {
+            alert("❌ 复制失败，请手动截图");
+        });
+    });
+}
+
+// 3. 其他按钮
 editBtn.addEventListener('click', () => {
     resultCard.classList.add('hidden');
     orderForm.classList.remove('hidden');
@@ -155,14 +162,11 @@ editBtn.addEventListener('click', () => {
     }
 });
 
-// 绑定两个历史按钮
 [historyBtn, historyBtn2].forEach(btn => {
-    if(btn) {
-        btn.addEventListener('click', () => {
-            renderHistoryList();
-            historyModal.classList.remove('hidden');
-        });
-    }
+    if(btn) btn.addEventListener('click', () => {
+        renderHistoryList();
+        historyModal.classList.remove('hidden');
+    });
 });
 
 closeHistory.addEventListener('click', () => historyModal.classList.add('hidden'));
