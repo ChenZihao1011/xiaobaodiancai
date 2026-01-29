@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小宝专属点菜机 🍽️</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- 标题区域 -->
+        <header>
+            <h1>🍱 小宝今日菜单 🍱</h1>
+            <p>选你想吃的，厨房马上安排！</p>
+        </header>
+
+        <!-- 输入表单区域 (默认显示) -->
+        <div id="order-form" class="card">
+            <div class="form-group">
+                <label>📅 选择日期</label>
+                <input type="date" id="date-picker">
+                <span id="weekday-display" class="badge">今天</span>
+            </div>
+
+            <div class="form-group">
+                <label>🍖 荤菜想吃啥？</label>
+                <select id="meat-select">
+                    <option value="" disabled selected>-- 请选择荤菜 --</option>
+                    <!-- 选项将由 JS 自动生成 -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🥬 素菜想吃啥？</label>
+                <select id="veggie-select">
+                    <option value="" disabled selected>-- 请选择素菜 --</option>
+                    <!-- 选项将由 JS 自动生成 -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🍚 主食吃什么？</label>
+                <select id="staple-select">
+                    <option value="" disabled selected>-- 请选择主食 --</option>
+                    <!-- 选项将由 JS 自动生成 -->
+                </select>
+            </div>
+
+            <button id="submit-btn" class="btn-primary">提交菜单 ✅</button>
+        </div>
+
+        <!-- 结果展示区域 (默认隐藏) -->
+        <div id="result-card" class="card hidden">
+            <div class="ticket">
+                <h2>🧾 点菜成功！</h2>
+                <div class="ticket-row">
+                    <span>时间：</span>
+                    <strong id="res-date"></strong>
+                </div>
+                <hr>
+                <div class="ticket-row">
+                    <span>🍖 荤菜：</span>
+                    <strong id="res-meat" class="highlight"></strong>
+                </div>
+                <div class="ticket-row">
+                    <span>🥬 素菜：</span>
+                    <strong id="res-veggie" class="highlight"></strong>
+                </div>
+                <div class="ticket-row">
+                    <span>🍚 主食：</span>
+                    <strong id="res-staple" class="highlight"></strong>
+                </div>
+                <hr>
+                <p class="footer-text">截图发给大厨吧~</p>
+            </div>
+            
+            <button id="edit-btn" class="btn-secondary">✏️ 修改订单</button>
+        </div>
+
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
