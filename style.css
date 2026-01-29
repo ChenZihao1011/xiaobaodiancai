@@ -1,7 +1,7 @@
-/* 全局设置：字体与背景 */
+/* 全局设置 */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fdf6e3; /* 温暖的米色背景 */
+    background-color: #fdf6e3;
     color: #333;
     display: flex;
     justify-content: center;
@@ -17,7 +17,14 @@ body {
 
 h1 {
     color: #d35400;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    font-size: 24px;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+    font-size: 14px;
 }
 
 /* 卡片样式 */
@@ -27,24 +34,23 @@ h1 {
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-}
-
-/* 隐藏类的样式 */
-.hidden {
-    display: none;
-}
-
-/* 表单控件样式 */
-.form-group {
     margin-bottom: 20px;
+}
+
+.hidden { display: none !important; }
+
+/* 表单控件 */
+.form-group {
+    margin-bottom: 15px;
     text-align: left;
 }
 
 label {
     display: block;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     color: #555;
+    font-size: 14px;
 }
 
 select, input {
@@ -55,12 +61,10 @@ select, input {
     font-size: 16px;
     outline: none;
     background-color: #fafafa;
-    box-sizing: border-box; /* 修复边框溢出问题 */
+    box-sizing: border-box;
 }
 
-select:focus, input:focus {
-    border-color: #ff9f43;
-}
+select:focus, input:focus { border-color: #ff9f43; }
 
 .badge {
     display: inline-block;
@@ -78,54 +82,117 @@ button {
     padding: 15px;
     border: none;
     border-radius: 12px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.1s;
 }
 
-button:active {
-    transform: scale(0.98);
+button:active { transform: scale(0.98); }
+
+.btn-primary { background-color: #e67e22; color: white; margin-top: 10px; }
+.btn-secondary { background-color: #95a5a6; color: white; margin-top: 15px; }
+
+.btn-history {
+    background-color: transparent;
+    color: #e67e22;
+    border: 2px solid #e67e22;
+    padding: 8px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    width: auto;
+    display: inline-block;
 }
 
-.btn-primary {
-    background-color: #e67e22;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #95a5a6;
-    color: white;
-    margin-top: 15px;
-}
-
-/* 结果小票样式 */
+/* 结果小票 */
 .ticket {
     border: 2px dashed #ddd;
     padding: 20px;
     border-radius: 10px;
     background-color: #fffdf0;
-    margin-bottom: 15px;
-}
-
-.ticket h2 {
-    color: #27ae60;
-    margin-top: 0;
 }
 
 .ticket-row {
     display: flex;
     justify-content: space-between;
-    margin: 10px 0;
-    font-size: 16px;
+    margin: 8px 0;
+    font-size: 15px;
 }
 
-.highlight {
-    color: #d35400;
-    font-size: 18px;
+.highlight { color: #d35400; font-weight: bold; }
+.footer-text { font-size: 12px; color: #999; margin-top: 10px; }
+
+/* === 历史记录弹窗样式 === */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* 从底部弹出 */
 }
 
-.footer-text {
-    font-size: 12px;
+.modal-content {
+    background-color: white;
+    width: 100%;
+    max-width: 500px;
+    height: 80%; /* 占屏幕80% */
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.close-btn {
+    font-size: 30px;
+    cursor: pointer;
     color: #999;
+    line-height: 30px;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto; /* 允许滚动 */
+    padding-top: 10px;
+}
+
+/* 历史记录单条卡片 */
+.history-item {
+    background-color: #f9f9f9;
+    border-left: 5px solid #e67e22;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.history-date { font-weight: bold; color: #333; margin-bottom: 5px; display: block;}
+.history-detail { font-size: 14px; color: #666; line-height: 1.6; }
+.delete-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 20px;
+    padding: 0;
+    width: auto;
 }

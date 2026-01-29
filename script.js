@@ -1,4 +1,4 @@
-// ====== 1. 这里是菜谱数据库，你可以随意增加 ======
+// ====== 1. 菜谱数据库 ======
 const menuData = {
     meat: [
         "红烧肉", "糖醋排骨", "宫保鸡丁", "清蒸鲈鱼", 
@@ -16,7 +16,7 @@ const menuData = {
     ]
 };
 
-// ====== 2. 获取页面元素 ======
+// ====== 2. 获取元素 ======
 const datePicker = document.getElementById('date-picker');
 const weekdayDisplay = document.getElementById('weekday-display');
 const meatSelect = document.getElementById('meat-select');
@@ -24,33 +24,37 @@ const veggieSelect = document.getElementById('veggie-select');
 const stapleSelect = document.getElementById('staple-select');
 const submitBtn = document.getElementById('submit-btn');
 const editBtn = document.getElementById('edit-btn');
-
 const orderForm = document.getElementById('order-form');
 const resultCard = document.getElementById('result-card');
 
-// 结果展示元素
+// 结果页元素
 const resDate = document.getElementById('res-date');
 const resMeat = document.getElementById('res-meat');
 const resVeggie = document.getElementById('res-veggie');
 const resStaple = document.getElementById('res-staple');
 
-// ====== 3. 初始化页面 ======
+// 历史记录相关元素
+const historyBtn = document.getElementById('history-btn');
+const historyModal = document.getElementById('history-modal');
+const closeHistory = document.getElementById('close-history');
+const historyList = document.getElementById('history-list');
+
+// ====== 3. 初始化 ======
 function init() {
-    // 1. 设置默认日期为今天
+    // 默认今天
     const today = new Date().toISOString().split('T')[0];
     datePicker.value = today;
     updateWeekday(today);
 
-    // 2. 填充下拉菜单选项
+    // 填充下拉框
     populateSelect(meatSelect, menuData.meat);
     populateSelect(veggieSelect, menuData.veggie);
     populateSelect(stapleSelect, menuData.staple);
 
-    // 3. 检查是否有历史记录（如果有，直接显示上次点的）
-    loadSavedMenu();
+    // 检查今天是否已经点过（为了方便显示）
+    checkTodayOrder(today);
 }
 
-// 辅助函数：填充下拉框
 function populateSelect(selectElement, items) {
     items.forEach(item => {
         const option = document.createElement('option');
@@ -60,24 +64,113 @@ function populateSelect(selectElement, items) {
     });
 }
 
-// 辅助函数：更新星期几
 function updateWeekday(dateString) {
     if (!dateString) return;
     const date = new Date(dateString);
     const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
     weekdayDisplay.textContent = weekdays[date.getDay()];
+    return weekdays[date.getDay()];
 }
 
-// ====== 4. 事件监听 ======
+// ====== 4. 核心逻辑：保存与读取 ======
 
-// 当日期改变时，更新星期几
+// 保存/更新记录到历史列表
+function saveToHistory(data) {
+    // 1. 获取现有历史记录（如果没有就是空数组）
+    let history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    
+    // 2. 检查该日期是否已存在
+    const existingIndex = history.findIndex(item => item.date === data.date);
+    
+    if (existingIndex > -1) {
+        // 如果存在，更新它
+        history[existingIndex] = data;
+    } else {
+        // 如果不存在，添加新的
+        history.push(data);
+    }
+
+    // 3. 按日期倒序排序（新的在前面）
+    history.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // 4. 存回本地
+    localStorage.setItem('baoMenu_history', JSON.stringify(history));
+}
+
+// 渲染历史记录列表
+function renderHistoryList() {
+    const history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    historyList.innerHTML = ''; // 清空当前列表
+
+    if (history.length === 0) {
+        historyList.innerHTML = '<p style="text-align:center;color:#999;margin-top:50px;">暂无记录，快去点菜吧~</p>';
+        return;
+    }
+
+    history.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+            <span class="history-date">${item.date} (${item.weekday})</span>
+            <div class="history-detail">
+                🍖 ${item.meat} <br>
+                🥬 ${item.veggie} <br>
+                🍚 ${item.staple}
+            </div>
+            <button class="delete-btn" onclick="deleteHistory('${item.date}')">🗑️</button>
+        `;
+        historyList.appendChild(div);
+    });
+}
+
+// 删除某条记录 (挂载到window以便HTML调用)
+window.deleteHistory = function(dateToDelete) {
+    if(!confirm('确定要删除这条记录吗？')) return;
+
+    let history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    // 过滤掉要删的那条
+    history = history.filter(item => item.date !== dateToDelete);
+    localStorage.setItem('baoMenu_history', JSON.stringify(history));
+    
+    // 重新渲染列表
+    renderHistoryList();
+    
+    // 如果删的是今天的，刷新一下页面重置状态
+    if(dateToDelete === datePicker.value) {
+        location.reload();
+    }
+}
+
+// 检查今天是否有记录，如果有，直接显示结果页
+function checkTodayOrder(date) {
+    const history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    const todayRecord = history.find(item => item.date === date);
+    
+    if (todayRecord) {
+        showResult(todayRecord);
+    }
+}
+
+// ====== 5. 事件监听 ======
+
 datePicker.addEventListener('change', (e) => {
     updateWeekday(e.target.value);
+    // 切换日期时，重置表单为该日期的记录（如果有），没有则清空
+    const history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    const record = history.find(item => item.date === e.target.value);
+    if(record) {
+        showResult(record);
+    } else {
+        // 重置为表单模式
+        resultCard.classList.add('hidden');
+        orderForm.classList.remove('hidden');
+        meatSelect.value = "";
+        veggieSelect.value = "";
+        stapleSelect.value = "";
+    }
 });
 
-// 点击提交按钮
 submitBtn.addEventListener('click', () => {
-    // 获取用户选择
     const choice = {
         date: datePicker.value,
         weekday: weekdayDisplay.textContent,
@@ -86,56 +179,56 @@ submitBtn.addEventListener('click', () => {
         staple: stapleSelect.value
     };
 
-    // 简单验证：必须选完
     if (!choice.meat || !choice.veggie || !choice.staple) {
         alert("小宝，菜还没点完呢！(｡•ˇ‸ˇ•｡)");
         return;
     }
 
-    // 保存到本地存储
-    localStorage.setItem('baoMenu_record', JSON.stringify(choice));
-
+    // 保存到历史记录
+    saveToHistory(choice);
     // 展示结果
     showResult(choice);
 });
 
-// 点击修改按钮
 editBtn.addEventListener('click', () => {
-    // 隐藏结果，显示表单
     resultCard.classList.add('hidden');
     orderForm.classList.remove('hidden');
+    
+    // 回填数据，方便修改
+    const history = JSON.parse(localStorage.getItem('baoMenu_history') || '[]');
+    const record = history.find(item => item.date === datePicker.value);
+    if(record){
+        meatSelect.value = record.meat;
+        veggieSelect.value = record.veggie;
+        stapleSelect.value = record.staple;
+    }
 });
 
-// ====== 5. 核心逻辑函数 ======
-
 function showResult(data) {
-    // 填入数据
     resDate.textContent = `${data.date} (${data.weekday})`;
     resMeat.textContent = data.meat;
     resVeggie.textContent = data.veggie;
     resStaple.textContent = data.staple;
-
-    // 切换视图
     orderForm.classList.add('hidden');
     resultCard.classList.remove('hidden');
 }
 
-function loadSavedMenu() {
-    const saved = localStorage.getItem('baoMenu_record');
-    if (saved) {
-        const data = JSON.parse(saved);
-        
-        // 自动回填表单（方便修改）
-        datePicker.value = data.date;
-        updateWeekday(data.date);
-        meatSelect.value = data.meat;
-        veggieSelect.value = data.veggie;
-        stapleSelect.value = data.staple;
+// === 历史记录弹窗控制 ===
+historyBtn.addEventListener('click', () => {
+    renderHistoryList(); // 打开前重新获取数据
+    historyModal.classList.remove('hidden');
+});
 
-        // 直接显示结果卡片
-        showResult(data);
+closeHistory.addEventListener('click', () => {
+    historyModal.classList.add('hidden');
+});
+
+// 点击弹窗外部关闭
+window.onclick = function(event) {
+    if (event.target == historyModal) {
+        historyModal.classList.add('hidden');
     }
 }
 
-// 启动程序
+// 启动
 init();
